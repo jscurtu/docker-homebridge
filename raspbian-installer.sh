@@ -8,17 +8,31 @@
 set -e
 
 INSTALL_DIR=$HOME/homebridge
-DOCKER_VERSION=18.06 # 18.09 has issues on raspberry pi zero
+ARCH=$(uname -m)
+
+. /etc/os-release
 
 LP="[oznu/homebridge installer]"
 
-echo "$LP Installing Docker $DOCKER_VERSION..."
+# Check OS
+
+if [ "$VERSION_ID" = "10" ]; then
+  echo "$LP Installing on $PRETTY_NAME..."
+elif [ "$VERSION_ID" = "9" ]; then
+  echo "$LP Installing on $PRETTY_NAME..."
+else
+  echo "$LP ERROR: $PRETTY_NAME is not supported"
+  exit 0
+fi
+
+echo "$LP Installing Docker..."
 
 # Step 1: Install Docker
 
-curl -fsSL https://get.docker.com -o get-docker.sh
+curl -fssl https://get.docker.com -o get-docker.sh
 chmod u+x get-docker.sh
-sudo VERSION=$DOCKER_VERSION ./get-docker.sh
+sudo ./get-docker.sh
+
 sudo usermod -aG docker $USER
 rm -rf get-docker.sh
 
@@ -28,9 +42,7 @@ echo "$LP Docker Installed"
 
 echo "$LP Installing Docker Compose..."
 
-sudo apt-get -y install python-setuptools
-sudo easy_install pip
-sudo pip install docker-compose~=1.23.0
+sudo apt-get -y install docker-compose
 
 echo "$LP Docker Compose Installed"
 
@@ -64,7 +76,7 @@ echo "$LP Created $INSTALL_DIR/docker-compose.yml"
 
 # Step 4: Pull Docker Image
 
-echo "$LP Pulling Homebridge Docker image (this may take a few minutes)..."
+echo "$LP Pulling Homebridge Docker image (this may take up to 20 minutes)..."
 
 sudo docker-compose pull
 

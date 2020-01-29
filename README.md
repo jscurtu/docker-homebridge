@@ -2,7 +2,18 @@
 
 # Docker Homebridge
 
-This Alpine Linux based Docker image allows you to run [Nfarina's](https://github.com/nfarina) [Homebridge](https://github.com/nfarina/homebridge) on your home network which emulates the iOS HomeKit API.
+This Alpine/Debian Linux based Docker image allows you to run [Nfarina's](https://github.com/nfarina) [Homebridge](https://github.com/nfarina/homebridge) on your home network which emulates the iOS HomeKit API.
+
+This is a multi-arch image and will also run on a Raspberry Pi or other Docker-enabled ARMv6/7/8 devices.
+
+  * [Guides](#guides)
+  * [Compatibility](#compatibility)
+  * [Usage](#usage)
+  * [Parameters](#parameters)
+  * [Homebridge Config](#homebridge-config)
+  * [Installing Plugins](#homebridge-plugins)
+  * [Docker Compose](#docker-compose)
+  * [Troubleshooting](#troubleshooting)
 
 ## Guides
 
@@ -14,6 +25,7 @@ This Alpine Linux based Docker image allows you to run [Nfarina's](https://githu
 Homebridge requires full access to your local network to function correctly which can be achieved using the ```--net=host``` flag.
 Currently this image will not work when using [Docker for Mac](https://docs.docker.com/docker-for-mac/) or [Docker for Windows](https://docs.docker.com/docker-for-windows/) due to [this](https://github.com/docker/for-mac/issues/68) and [this](https://github.com/docker/for-win/issues/543).
 
+
 ## Usage
 
 ```shell
@@ -22,17 +34,13 @@ docker run \
   --name=homebridge \
   -e PUID=<UID> -e PGID=<GID> \
   -e TZ=<timezone> \
+  -e HOMEBRIDGE_CONFIG_UI=1 \
+  -e HOMEBRIDGE_CONFIG_UI_PORT=8080 \
   -v </path/to/config>:/homebridge \
   oznu/homebridge
 ```
 
-## Raspberry Pi / ARMv6
-
-This image will also run on a Raspberry Pi or other Docker-enabled ARMv6/7/8 devices by using the using the ```arm32v6``` tag:
-
-```
-docker run --net=host --name=homebridge oznu/homebridge:arm32v6
-```
+## Raspberry Pi
 
 This docker image has been tested on the following Raspberry Pi models:
 
@@ -41,14 +49,6 @@ This docker image has been tested on the following Raspberry Pi models:
 * Raspberry Pi Zero W
 
 [See the wiki for a guide on getting Homebridge up and running on a Raspberry Pi](https://github.com/oznu/docker-homebridge/wiki/Homebridge-on-Raspberry-Pi).
-
-## AARCH64 / arm64v8
-
-This image will also run on AARCH64/arm64v8 devices using the `arm64v8` tag:
-
-```
-docker run --net=host --name=homebridge oznu/homebridge:arm64v8
-```
 
 ## Parameters
 
@@ -148,13 +148,15 @@ If you prefer to use [Docker Compose](https://docs.docker.com/compose/):
 version: '2'
 services:
   homebridge:
-    image: oznu/homebridge:latest  # use "arm32v6" instead of "latest" for arm devices
+    image: oznu/homebridge:latest
     restart: always
     network_mode: host
     environment:
       - TZ=Australia/Sydney
       - PGID=1000
       - PUID=1000
+      - HOMEBRIDGE_CONFIG_UI=1
+      - HOMEBRIDGE_CONFIG_UI_PORT=8080
     volumes:
       - ./volumes/homebridge:/homebridge
 ```
@@ -210,3 +212,11 @@ See the wiki for a list of image variants: https://github.com/oznu/docker-homebr
 [![Slack Status](https://slackin-znyruquwmv.now.sh/badge.svg)](https://slackin-znyruquwmv.now.sh)
 
 Join the [Homebridge Slack](https://slackin-znyruquwmv.now.sh/) chat and ask in the [#docker](https://homebridgeteam.slack.com/messages/C961HJHCP) channel.
+
+## License
+
+Copyright (C) 2017-2020 oznu
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the [GNU General Public License](./LICENSE) for more details.
