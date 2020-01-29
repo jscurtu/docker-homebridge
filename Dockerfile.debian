@@ -1,5 +1,5 @@
 ARG S6_ARCH
-FROM oznu/s6-node:10.15.3-debian-${S6_ARCH:-amd64}
+FROM oznu/s6-node:12.14.1-debian-${S6_ARCH:-amd64}
 
 RUN apt-get update \
   && apt-get install -y git python make g++ libnss-mdns avahi-discover libavahi-compat-libdnssd-dev \
@@ -15,10 +15,10 @@ RUN git clone https://github.com/OpenZWave/open-zwave.git open-zwave \
   && ln -s /usr/local/lib64/libopenzwave.so.1.6 /usr/local/lib/libopenzwave.so.1.6 \
   && ldconfig
 
-ENV HOMEBRIDGE_VERSION=0.4.48
+ENV HOMEBRIDGE_VERSION=0.4.50
 RUN npm install -g --unsafe-perm homebridge@${HOMEBRIDGE_VERSION}
 
-ENV CONFIG_UI_VERSION=4.0.0
+ENV CONFIG_UI_VERSION=4.9.0 HOMEBRIDGE_CONFIG_UI=0 HOMEBRIDGE_CONFIG_UI_PORT=8080
 RUN npm install -g --unsafe-perm homebridge-config-ui-x@${CONFIG_UI_VERSION}
 
 WORKDIR /homebridge
@@ -31,3 +31,4 @@ RUN [ "${AVAHI:-1}" = "1" ] || (echo "Removing Avahi" && \
   rm -rf /etc/services.d/avahi \
     /etc/services.d/dbus \
     /etc/cont-init.d/40-dbus-avahi)
+  
