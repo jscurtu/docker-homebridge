@@ -9,11 +9,13 @@ RUN apt-get update \
   && chmod 4755 /bin/ping \
   && mkdir /homebridge
 
-RUN git clone https://github.com/OpenZWave/open-zwave.git open-zwave \
+ENV LIBOPENZWAVE_VERSION=1.6
+RUN cd /root && git clone https://github.com/OpenZWave/open-zwave.git open-zwave \
   && cd open-zwave && make install \
   && ln -s /usr/local/lib64/libopenzwave.so /usr/local/lib/libopenzwave.so \
-  && ln -s /usr/local/lib64/libopenzwave.so.1.6 /usr/local/lib/libopenzwave.so.1.6 \
-  && ldconfig
+  && ln -s /usr/local/lib64/libopenzwave.so.${LIBOPENZWAVE_VERSION} /usr/local/lib/libopenzwave.so.${LIBOPENZWAVE_VERSION} \
+  && ldconfig \ 
+  && rm -rf /root/open-zwave
 
 ENV HOMEBRIDGE_VERSION=0.4.50
 RUN npm install -g --unsafe-perm homebridge@${HOMEBRIDGE_VERSION}
