@@ -11,8 +11,6 @@ RUN apk add --no-cache git python make g++ avahi-compat-libdns_sd avahi-dev dbus
 ENV LIBOPENZWAVE_VERSION=1.6
 RUN cd /root && git clone https://github.com/OpenZWave/open-zwave.git open-zwave \
   && cd open-zwave && make install \
-  && ln -s /usr/local/lib64/libopenzwave.so /usr/local/lib/libopenzwave.so \
-  && ln -s /usr/local/lib64/libopenzwave.so.${LIBOPENZWAVE_VERSION} /usr/local/lib/libopenzwave.so.${LIBOPENZWAVE_VERSION} \
   && ldconfig \ 
   && rm -rf /root/open-zwave
 
